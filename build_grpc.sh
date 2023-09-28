@@ -46,6 +46,7 @@ popd
 
 cmake -Bbuild \
       -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=ON \
       -DgRPC_INSTALL=ON \
       -DgRPC_ABSL_PROVIDER=package \
       -DgRPC_CARES_PROVIDER=package \
@@ -54,5 +55,5 @@ cmake -Bbuild \
       -DgRPC_SSL_PROVIDER=package \
       -DgRPC_ZLIB_PROVIDER=package
       #-DCMAKE_INSTALL_PREFIX=${{github.workspace}}/grpc/grpc_install
-sudo cmake --build build
+sudo cmake --build build --target install
 
