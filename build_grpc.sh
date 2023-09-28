@@ -10,7 +10,7 @@ git submodule update --init --recursive
 mkdir -p "third_party/abseil-cpp/cmake/build"
 pushd "third_party/abseil-cpp/cmake/build"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE ../..
-make install
+sudo make install
 popd
 
 # Install c-ares
@@ -20,28 +20,28 @@ popd
 mkdir -p "third_party/cares/cares/cmake/build"
 pushd "third_party/cares/cares/cmake/build"
 cmake -DCMAKE_BUILD_TYPE=Release ../..
-make install
+sudo make install
 popd
 
 # Install protobuf
 mkdir -p "third_party/protobuf/cmake/build"
 pushd "third_party/protobuf/cmake/build"
 cmake -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -Dprotobuf_ABSL_PROVIDER=package ../..
-make
+sudo make
 popd
 
 # Install re2
 mkdir -p "third_party/re2/cmake/build"
 pushd "third_party/re2/cmake/build"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE ../..
-make
+sudo make
 popd
 
 # Install zlib
 mkdir -p "third_party/zlib/cmake/build"
 pushd "third_party/zlib/cmake/build"
 cmake -DCMAKE_BUILD_TYPE=Release ../..
-make
+sudo make
 popd
 
 cmake -Bbuild \
@@ -54,5 +54,5 @@ cmake -Bbuild \
       -DgRPC_SSL_PROVIDER=package \
       -DgRPC_ZLIB_PROVIDER=package
       #-DCMAKE_INSTALL_PREFIX=${{github.workspace}}/grpc/grpc_install
-cmake --build build
+sudo cmake --build build
 
