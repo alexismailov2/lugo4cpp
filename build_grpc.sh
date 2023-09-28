@@ -27,21 +27,21 @@ popd
 mkdir -p "third_party/protobuf/cmake/build"
 pushd "third_party/protobuf/cmake/build"
 cmake -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -Dprotobuf_ABSL_PROVIDER=package ../..
-sudo make
+sudo make install
 popd
 
 # Install re2
 mkdir -p "third_party/re2/cmake/build"
 pushd "third_party/re2/cmake/build"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE ../..
-sudo make
+sudo make install
 popd
 
 # Install zlib
 mkdir -p "third_party/zlib/cmake/build"
 pushd "third_party/zlib/cmake/build"
 cmake -DCMAKE_BUILD_TYPE=Release ../..
-sudo make
+sudo make install
 popd
 
 cmake -Bbuild \
