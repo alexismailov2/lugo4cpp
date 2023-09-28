@@ -1,5 +1,3 @@
-set(CMAKE_CXX_STANDARD 17)
-
 # Generating main project
 add_executable(lugo4cpp_example
         main.cpp)
