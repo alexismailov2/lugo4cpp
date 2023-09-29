@@ -25,11 +25,14 @@ public:
     }
 
     // the Lugo address
-    _grpcUrl = std::getenv("BOT_GRPC_URL") || "localhost:5000";
-    _grpcInsecure = std::string(std::getenv("BOT_GRPC_INSECURE")) == "true";
+    auto botGrpcUrl = std::getenv("BOT_GRPC_URL");
+    _grpcUrl = botGrpcUrl ? botGrpcUrl :  "localhost:5000";
+    auto botGrpcInsecure = std::getenv("BOT_GRPC_INSECURE");
+    _grpcInsecure = botGrpcInsecure && (std::string(botGrpcInsecure) == "true");
 
     // defining bot side
-    if (!lugo::Team_Side_Parse(std::getenv("BOT_TEAM"), &_botTeamSide)) {
+    auto botTeam = std::getenv("BOT_TEAM");
+    if (!lugo::Team_Side_Parse(botTeam, &_botTeamSide)) {
       throw std::runtime_error("BOT_TEAM is not set");
     }
     auto bot_number = std::getenv("BOT_NUMBER");

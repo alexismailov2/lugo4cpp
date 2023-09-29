@@ -12,7 +12,7 @@ public:
   lugo::Team_Side side;    ///
   int number{};            ///
   lugo::Point initPosition;///
-  Mapper mapper;           ///
+  std::shared_ptr<Mapper> mapper;           ///
 
   /**
    *
@@ -24,7 +24,7 @@ public:
   MyBot(lugo::Team_Side side,
         int number,
         lugo::Point initPosition,
-        Mapper mapper)
+        std::shared_ptr<Mapper> mapper)
       : side{side}
       , number{number}
       , initPosition{std::move(initPosition)}
@@ -63,8 +63,8 @@ public:
     {
       auto [reader, me] = _makeReader(snapshot);
       auto ballPosition = reader.getBall().position();
-      auto ballRegion = mapper.getRegionFromPoint(ballPosition);
-      auto myRegion = mapper.getRegionFromPoint(initPosition);
+      auto ballRegion = mapper->getRegionFromPoint(ballPosition);
+      auto myRegion = mapper->getRegionFromPoint(initPosition);
 
       auto moveDest = initPosition;
       if (std::abs(myRegion.getRow() - ballRegion.getRow()) <= 2 &&
@@ -93,8 +93,8 @@ public:
     {
       auto [reader, me] = _makeReader(snapshot);
       auto ballPosition = snapshot.ball().position();
-      auto ballRegion = mapper.getRegionFromPoint(ballPosition);
-      auto myRegion = mapper.getRegionFromPoint(initPosition);
+      auto ballRegion = mapper->getRegionFromPoint(ballPosition);
+      auto myRegion = mapper->getRegionFromPoint(initPosition);
 
       auto moveDest = initPosition;
       if (std::abs(myRegion.getRow() - ballRegion.getRow()) <= 2 &&
@@ -122,8 +122,8 @@ public:
     try {
       auto [reader, me] = _makeReader(snapshot);
 
-      auto myGoalCenter = mapper.getRegionFromPoint(reader.getOpponentGoal().getCenter());
-      auto currentRegion = mapper.getRegionFromPoint(me.position());
+      auto myGoalCenter = mapper->getRegionFromPoint(reader.getOpponentGoal().getCenter());
+      auto currentRegion = mapper->getRegionFromPoint(me.position());
 
       lugo::Order myOrder;
       if (std::abs(currentRegion.getRow() - myGoalCenter.getRow()) <= 1 &&

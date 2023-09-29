@@ -38,11 +38,11 @@ int main()
   auto config = EnvVarLoader();
 
   // the map will help us to see the field in quadrants (called regions) instead of working with coordinates
-  auto map = Mapper(10, 6, config. getBotTeamSide());
+  auto map = std::make_shared<Mapper>(10, 6, config. getBotTeamSide());
 
   // our bot strategy defines our bot initial position based on its number
-  auto initialRegion = map.getRegion(PLAYER_POSITIONS[config.getBotNumber()].Col,
-                                     PLAYER_POSITIONS[config.getBotNumber()].Row);
+  auto initialRegion = map->getRegion(PLAYER_POSITIONS[config.getBotNumber()].Col,
+                                      PLAYER_POSITIONS[config.getBotNumber()].Row);
 
   // now we can create the bot. We will use a shortcut to create the client from the config, but we could use the
   // client constructor as well
