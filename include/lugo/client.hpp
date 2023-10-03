@@ -21,16 +21,18 @@ using RawTurnProcessor = std::function<lugo::OrderSet(lugo::OrderSet, lugo::Game
 class Client
 {
 private:
-  std::string serverAdd; ///
-  bool grpc_insecure{}; ///
-  std::string token; ///
-  lugo::Team_Side teamSide; ///
-  int number{}; ///
-  lugo::Point init_position; ///
-  std::unique_ptr<lugo::Game::Stub> _client; ///
-  grpc::ClientContext context;
-  std::function<void(lugo::GameSnapshot)> gettingReadyHandler; ///
+  std::string _serverAdd;
+  bool _grpc_insecure{};
+  std::string _token;
+  lugo::Team_Side _teamSide;
+  int _number{};
+  lugo::Point _init_position;
+  std::unique_ptr<lugo::Game::Stub> _client;
+  grpc::ClientContext _context;
+  std::function<void(lugo::GameSnapshot)> _gettingReadyHandler;
   std::shared_ptr<grpc::Channel> _channel;
+  std::shared_ptr<std::promise<bool>> _play_finished;
+  std::thread _play_routine;
 
 public:
   /**
@@ -49,46 +51,62 @@ public:
          lugo::Team_Side teamSide,
          int number,
          lugo::Point init_position)
-      : serverAdd{std::move(server_add)}
-      , grpc_insecure{grpc_insecure}
-      , token{std::move(token)}
-      , teamSide{teamSide}
-      , number{number}
-      , init_position{std::move(init_position)}
+      : _serverAdd{std::move(server_add)}
+      , _grpc_insecure{grpc_insecure}
+      , _token{std::move(token)}
+      , _teamSide{teamSide}
+      , _number{number}
+      , _init_position{std::move(init_position)}
   {
   }
 
-  /**
-   *
-   * @param {function(GameSnapshot)} handler
-   *
-   * @returns {Client}
-   */
-  Client& setGettingReadyHandler(std::function<void(lugo::GameSnapshot)> handler)
-  {
-    gettingReadyHandler = std::move(handler);
-    return *this;
-  }
+//  void set_client(server_grpc::GameStub client)
+//  {
+//      _client = client;
+//  }
 
   auto get_name() -> std::string
   {
-    return std::string(!teamSide ? "HOME" : "AWAY") + "-" + std::to_string(number);
+    return std::string(!_teamSide ? "HOME" : "AWAY") + "-" + std::to_string(_number);
   }
 
-  /**
-   *
-   * @param {Bot} bot
-   * @param {function()} onJoin
-   * @returns {Promise<void>}
-   */
-  auto playAsBot(Bot& bot, std::function<void()> onJoin) -> lugo::OrderSet
+  void set_initial_position(lugo::Point init_position)
   {
+    _init_position = init_position;
+  }
+
+  void getting_ready_handler(lugo::GameSnapshot snapshot)
+  {
+    std::cout << "Default getting ready handler called for ";
+  }
+
+  void set_getting_ready_handler(std::function<void(lugo::GameSnapshot)> handler)
+  {
+    _gettingReadyHandler = std::move(handler);
+  }
+
+  void play(RawTurnProcessor raw_processor, std::function<void()> onJoin = {})
+  {
+    std::cout << get_name() << "Starting to play" << std::endl;
+    _bot_start(std::move(raw_processor), std::move(onJoin));
+  }
+
+  //  void play(callback: Callable[[lugo.GameSnapshot], lugo.OrderSet],
+  //            on_join: Callable[[], None]) -> std::future<bool>
+  //  {
+  //    callback = callback;
+  //    std::cout << get_name() << "Starting to play" << std::endl;
+  //    return _bot_start(callback, on_join);
+  //  }
+
+  void playAsBot(Bot& bot, std::function<void()> onJoin)
+  {
+    set_getting_ready_handler([&](lugo::GameSnapshot s) { bot.gettingReady(s); });
     std::cout << get_name() << "Playing as bot" << std::endl;
-    setGettingReadyHandler([&](lugo::GameSnapshot s) { bot.gettingReady(s); });
 
     auto processor = [&](lugo::OrderSet orders, lugo::GameSnapshot snapshot) -> lugo::OrderSet {
-      auto playerState = defineState(snapshot, number, teamSide);
-      if (number == 1)
+      auto playerState = defineState(snapshot, _number, _teamSide);
+      if (_number == 1)
       {
         orders = bot.asGoalkeeper(orders, snapshot, playerState);
       }
@@ -111,17 +129,7 @@ public:
       }
       return orders;
     };
-    return _bot_start(processor, onJoin);
-  }
-
-  /**
-   *
-   * @param {function} raw_processor
-   * @param {function()} onJoin
-   */
-  auto play(RawTurnProcessor raw_processor, std::function<void()> onJoin = {}) -> lugo::OrderSet
-  {
-    return _bot_start(std::move(raw_processor), std::move(onJoin));
+    _bot_start(processor, std::move(onJoin));
   }
 
  /**
@@ -130,47 +138,81 @@ public:
   * @param onJoin callback
   * @return
   */
-  auto _bot_start(RawTurnProcessor processor, std::function<void()> onJoin) -> lugo::OrderSet
+  void _bot_start(RawTurnProcessor processor, std::function<void()> onJoin)
   {
-    std::cout << get_name() << " Starting bot " << teamSide << "-" << number << std::endl;
-    auto channel = grpc_insecure
-                       ? grpc::CreateChannel(serverAdd, grpc::InsecureChannelCredentials())
-                       : grpc::CreateChannel(serverAdd, grpc::InsecureChannelCredentials());
+    std::cout << get_name() << " Starting bot " << _teamSide << "-" << _number << std::endl;
+    _channel = _grpc_insecure
+                   ? grpc::CreateChannel(_serverAdd, grpc::InsecureChannelCredentials())
+                   : grpc::CreateChannel(_serverAdd, grpc::InsecureChannelCredentials());
     // TODO: Temporary secure credentials not implemented
-                       //: grpc::CreateChannel(serverAdd, grpc::SecureChannelCredentials())
-//    try
-//    {
-//      grpc.channel_ready_future(channel).result(timeout=5);
-//    }
-//    catch(grpc::FutureTimeoutError)
-//    {
-//        throw std::runtime_error("timed out waiting to connect to the game server " + serverAdd);
-//    }
+                   //: grpc::CreateChannel(serverAdd, grpc::SecureChannelCredentials())
 
-    _channel = channel;
-    _client = lugo::Game::NewStub(channel);
+    std::chrono::system_clock::time_point deadline = std::chrono::system_clock::now() + std::chrono::seconds(5);
+    _context.set_deadline(deadline);
+    auto stateConnection = _channel->GetState(true);
+    switch(stateConnection)
+    {
+        case GRPC_CHANNEL_IDLE:
+          std::cout << "channel is idle" << std::endl;
+          break;
+        case GRPC_CHANNEL_CONNECTING:
+          std::cout << "channel is connecting" << std::endl;
+          break;
+        case GRPC_CHANNEL_READY:
+          std::cout << "channel is ready for work" << std::endl;
+          break;
+        case GRPC_CHANNEL_TRANSIENT_FAILURE:
+          std::cout << "channel has seen a failure but expects to recover" << std::endl;
+          break;
+        case GRPC_CHANNEL_SHUTDOWN:
+          std::cout << "channel has seen a failure that it cannot recover from" << std::endl;
+          break;
+    }
+    _client = lugo::Game::NewStub(_channel);
 
 //    if (err)
 //    {
 //      reject(Error("failed to connect to the Game Server at " + serverAdd + " : " + err));
 //    }
-    std::cout << (std::string("connect to the gRPC server ") + (teamSide == lugo::Team_Side_HOME ? "HOME" : "AWAY") + " - " + std::to_string(number)) << std::endl;
+    std::cout << (std::string("connect to the gRPC server ") + (_teamSide == lugo::Team_Side_HOME ? "HOME" : "AWAY") + " - " + std::to_string(_number)) << std::endl;
 
-    auto req = lugo::JoinRequest();
-    req.set_token(token);
-    req.set_protocol_version(PROTOCOL_VERSION);
-    req.set_team_side(teamSide);
-    req.set_number(number);
-    *req.mutable_init_position() = init_position;
+    auto joinRequest = lugo::JoinRequest();
+    joinRequest.set_token(_token);
+    //joinRequest.set_protocol_version(PROTOCOL_VERSION); //TODO: python not set it
+    joinRequest.set_team_side(_teamSide);
+    joinRequest.set_number(_number);
+    *joinRequest.mutable_init_position() = _init_position;
 
-    auto reader = _client->JoinATeam(&context, req);
+    _play_finished = std::make_shared<std::promise<bool>>();
+    auto reader = _client->JoinATeam(&_context, joinRequest);
     onJoin();
-    return _response_watcher(std::move(reader), processor);
-    // TODO: for multithreading should be returned std::future
+    _play_routine = std::thread([rdr = std::move(reader), p = std::move(processor), this]() mutable {
+      _response_watcher(std::move(rdr), std::move(p));
+    });
+    //return _play_finished;
   }
 
-  auto _response_watcher(std::unique_ptr<::grpc::ClientReader<::lugo::GameSnapshot>> reader,
-                         RawTurnProcessor processor) -> lugo::OrderSet
+  void stop()
+  {
+    std::cout << get_name() << "stopping bot - you may need to kill the process if there is no messages coming from the server" << std::endl;
+    _play_finished->set_value(true);
+    if (_play_routine.joinable())
+    {
+      _play_routine.join();
+    }
+  }
+
+  void wait()
+  {
+    _play_finished->get_future().get();
+    if (_play_routine.joinable())
+    {
+      _play_routine.join();
+    }
+  }
+
+  void _response_watcher(std::unique_ptr<::grpc::ClientReader<::lugo::GameSnapshot>> reader,
+                         RawTurnProcessor processor)
   {
     try
     {
@@ -182,10 +224,10 @@ public:
             std::cout << get_name() << " All done! lugo::GameSnapshot_State_OVER" << std::endl;
             break;
           }
-//          else if(_play_finished.is_set())
-//          {
-//            break;
-//          }
+          else if(_play_finished->get_future().wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+          {
+            break;
+          }
           else if (snapshot.state() == lugo::GameSnapshot_State_LISTENING)
           {
             auto orders_ = lugo::OrderSet();
@@ -196,12 +238,11 @@ public:
             }
             catch(std::runtime_error& e)
             {
-                std::cout << get_name() << "bot processor error: " << e.what() << std::endl;
+                std::cout << get_name() << " bot processor error: " << e.what() << std::endl;
             }
             if (orders_.IsInitialized())
             {
-              //await this.orderSetSender(orderSet);
-              auto status = _client->SendOrders(&context, orders_, nullptr);
+              auto status = _client->SendOrders(&_context, orders_, nullptr);
               if (!status.ok())
               {
                 std::cout << get_name() << " bot processor errorCode: " << status.error_code() << ", errorMessage: " << status.error_message() << std::endl;
@@ -209,26 +250,23 @@ public:
             }
             else
             {
-              std::cout << get_name() << " [turn #" << std::to_string(snapshot.turn()) << "] bot " << std::to_string(teamSide) << "-" << std::to_string(number) << " did not return orders" << std::endl;
+              std::cout << get_name() << " [turn #" << std::to_string(snapshot.turn()) << "] bot " << std::to_string(_teamSide) << "-" << std::to_string(_number) << " did not return orders" << std::endl;
             }
           }
           else if (snapshot.state() == lugo::GameSnapshot_State_GET_READY)
           {
-            gettingReadyHandler(snapshot);
+            getting_ready_handler(snapshot);
           }
-          //std::cout << "Client: received value " << reader.turn() << std::endl;
         }
-        //_play_finished.set();
+        _play_finished->set_value(true);
         auto status = reader->Finish();
         if (status.ok())
         {
           std::cout << "Client: tracing succeeded" << std::endl;
-          //return true;
         }
         else
         {
           std::cout << "Client: tracing failed" << std::endl;
-          //return false;
         }
     }
 //    catch(grpc::rpcError)
@@ -239,7 +277,6 @@ public:
     {
       std::cout << get_name() << " internal error processing turn: " << e.what() << std::endl;
     }
-    return {};
   }
 
   /**

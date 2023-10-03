@@ -1,17 +1,19 @@
-#include <iostream>
-
-//#include <lugo/mapper.hpp>
-//#include <lugo/orientation.hpp>
-//#include <lugo/geo.hpp>
-//#include <lugo/proto_exported.hpp>
-//#include <lugo/stub.hpp>
-//#include <lugo/specs.hpp>
-//#include <lugo/goal.hpp>
-//#include <lugo/configurator.hpp>
-//#include <lugo/index.hpp>
 #include <lugo/client.hpp>
 
 #include "my_bot.hpp"
+
+#include <iostream>
+
+Client* lugoClientPtr = nullptr;
+auto signalHandler(int signum)
+{
+  std::cout << "Stop requested\n" << std::endl;
+  if (lugoClientPtr)
+  {
+    lugoClientPtr->stop();
+  }
+  exit(signum);
+}
 
 int main()
 {
@@ -52,7 +54,13 @@ int main()
                      initialRegion.getCenter(),
                      map);
 
-  auto orderSet = lugoClient.playAsBot(myBot, [](){ std::cout << "onJoin" << std::endl; });
+  lugoClient.playAsBot(myBot, [](){
+    std::cout << "I may run it when the bot is connected to the server" << std::endl;
+  });
   std::cout << "We are playing!" << std::endl;
+
+  signal(SIGINT, signalHandler);
+  lugoClient.wait();
+  std::cout << "bye!" << std::endl;
   return 0;
 }

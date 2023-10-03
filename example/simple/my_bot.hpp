@@ -64,7 +64,7 @@ public:
       auto [reader, me] = _makeReader(snapshot);
       auto ballPosition = reader.getBall().position();
       auto ballRegion = mapper->getRegionFromPoint(ballPosition);
-      auto myRegion = mapper->getRegionFromPoint(initPosition);
+      auto myRegion = mapper->getRegionFromPoint(me.position()); //(initPosition);
 
       auto moveDest = initPosition;
       if (std::abs(myRegion.getRow() - ballRegion.getRow()) <= 2 &&
