@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 project(lugo4cpp)
 
 set(CMAKE_CXX_STANDARD 17)
+include(CMakeFindDependencyMacro)
 
 # Downloading github subproject with proto files
 include(FetchContent)
