@@ -11,6 +11,12 @@
 #include <server.pb.h>
 #include <server.grpc.pb.h>
 
+
+//#include "./physics.pb.h"
+//#include "./server.pb.h"
+//#include "./server.grpc.pb.h"
+
+
 #include <functional>
 #include <future>
 
@@ -132,7 +138,7 @@ public:
   */
   auto _bot_start(RawTurnProcessor processor, std::function<void()> onJoin) -> lugo::OrderSet
   {
-    std::cout << get_name() << " Starting bot " << teamSide << "-" << number << std::endl;
+    std::cout << get_name() << " Starting bot to " << serverAdd << " === " << teamSide << "-" << number << std::endl;
     auto channel = grpc_insecure
                        ? grpc::CreateChannel(serverAdd, grpc::InsecureChannelCredentials())
                        : grpc::CreateChannel(serverAdd, grpc::InsecureChannelCredentials());
@@ -150,20 +156,42 @@ public:
     _channel = channel;
     _client = lugo::Game::NewStub(channel);
 
+    gpr_timespec out;
+    out.tv_sec = 10;
+    out.tv_nsec = 0;
+    out.clock_type = GPR_TIMESPAN;
+    channel->WaitForConnected(out);
+//    channel->WaitForStateChange(GRPC_CHANNEL_IDLE,out );
 //    if (err)
 //    {
 //      reject(Error("failed to connect to the Game Server at " + serverAdd + " : " + err));
 //    }
+
+     std::cout << "POS ORIGINAL, X: " << init_position.x() << ", Y: " << init_position.y() << std::endl;
     std::cout << (std::string("connect to the gRPC server ") + (teamSide == lugo::Team_Side_HOME ? "HOME" : "AWAY") + " - " + std::to_string(number)) << std::endl;
 
+//    auto iniPos = new lugo::Point();
+//
+//     iniPos->set_x(2000 + (500 * number));
+//     iniPos->set_y(600 );
     auto req = lugo::JoinRequest();
     req.set_token(token);
     req.set_protocol_version(PROTOCOL_VERSION);
     req.set_team_side(teamSide);
     req.set_number(number);
-    *req.mutable_init_position() = init_position;
+    req.set_allocated_init_position(&init_position);
+  //  *req.mutable_init_position() = iniPos;
 
     auto reader = _client->JoinATeam(&context, req);
+//    reader->WaitForInitialMetadata();
+
+//    lugo::GameSnapshot snapshot;
+//     std::cout << " Lets read this: X: " << req.init_position().x() << ", Y: " << req.init_position().y() << std::endl;
+//     while (reader->Read(&snapshot)) {
+//         std::cout << snapshot.state() << " Ainda aqui" << std::endl;
+//
+//     }
+
     onJoin();
     return _response_watcher(std::move(reader), processor);
     // TODO: for multithreading should be returned std::future
@@ -220,6 +248,7 @@ public:
         }
         //_play_finished.set();
         auto status = reader->Finish();
+
         if (status.ok())
         {
           std::cout << "Client: tracing succeeded" << std::endl;
@@ -227,7 +256,8 @@ public:
         }
         else
         {
-          std::cout << "Client: tracing failed" << std::endl;
+            // IMPORTANT TO HELP DEBUGGING
+          std::cout << status.error_details() << " -> " << status.error_message() << " CODE: " << status.error_code() << "Client: tracing failed" << std::endl;
           //return false;
         }
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <lugo/specs.hpp>
-
+#include <string>
 #include <server.pb.h>
 #include <stdio.h>
 
@@ -33,9 +33,12 @@ public:
 
     // defining bot side
     auto botTeam = std::getenv("BOT_TEAM");
-//    if (!lugo::Team_Side_Parse(botTeam, &_botTeamSide)) {
-//      throw std::runtime_error("BOT_TEAM is not set xxxx");
-//    }
+//    auto asString = std::str(botTeam);
+//    transform(asString.begin(), asString.end(), asString.begin(), ::toupper);
+
+    if (!lugo::Team_Side_Parse(botTeam, &_botTeamSide)) {
+      throw std::runtime_error("BOT_TEAM is not set xxxx");
+    }
     auto bot_number = std::getenv("BOT_NUMBER");
     _botNumber = std::atoi(bot_number);
     if (_botNumber < 1 || _botNumber > SPECS::MAX_PLAYERS) {

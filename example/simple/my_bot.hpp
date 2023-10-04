@@ -82,7 +82,7 @@ public:
     }
     catch (std::runtime_error& e)
     {
-      std::cout << "did not play this turn" << e.what() << std::endl;
+      std::cout << "did not play this turn onDisputing - " << e.what() << std::endl;
     }
     return {};
   }
@@ -112,7 +112,7 @@ public:
     }
     catch (std::runtime_error& e)
     {
-      std::cout << "did not play this turn" << e.what() << std::endl;
+      std::cout << "did not play this turn onDefending - " << e.what() << std::endl;
     }
     return {};
   }
@@ -144,7 +144,7 @@ public:
     }
     catch (std::runtime_error &e)
     {
-      std::cout << "did not play this turn" << e.what() << std::endl;
+      std::cout << "did not play this turn onHolding - " << e.what() << std::endl;
     }
     return {};
   }
@@ -165,7 +165,7 @@ public:
     }
     catch (std::runtime_error &e)
     {
-      std::cout << "did not play this turn " << e.what() << std::endl;
+      std::cout << "did not play this turn onSupporting - " << e.what() << std::endl;
     }
     return {};
   }
@@ -197,7 +197,7 @@ public:
     }
     catch (std::runtime_error& e)
     {
-      std::cout << "did not play this turn " << e.what() << std::endl;
+      std::cout << "did not play this turn asGoalkeeper - " << e.what() << std::endl;
     }
     return {};
   }

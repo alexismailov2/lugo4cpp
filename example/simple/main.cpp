@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <grpcpp/alarm.h>
 //#include <lugo/mapper.hpp>
 //#include <lugo/orientation.hpp>
 //#include <lugo/geo.hpp>
@@ -41,12 +41,15 @@ int main()
   auto map = std::make_shared<Mapper>(10, 6, config. getBotTeamSide());
 
   // our bot strategy defines our bot initial position based on its number
-  auto initialRegion = map->getRegion(PLAYER_POSITIONS[config.getBotNumber()].Col,
-                                      PLAYER_POSITIONS[config.getBotNumber()].Row);
+  auto initialRegion = map->getRegion(PLAYER_POSITIONS[config.getBotNumber() - 1].Col,
+                                      PLAYER_POSITIONS[config.getBotNumber() - 1].Row);
 
   // now we can create the bot. We will use a shortcut to create the client from the config, but we could use the
   // client constructor as well
   auto lugoClient = NewClientFromConfig(config, initialRegion.getCenter());
+
+    std::cout << "INIT POST" << initialRegion.getCenter().x() << " X " << initialRegion.getCenter().y() << std::endl;
+
   auto myBot = MyBot(config.getBotTeamSide(),
                      config.getBotNumber(),
                      initialRegion.getCenter(),
