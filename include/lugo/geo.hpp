@@ -1,91 +1,55 @@
 #pragma once
 
-#include <physics.pb.h>
+#include <pb/physics.pb.h>
 
 /**
- *
+ * TODO: Should be described.
  * @param Vector v
  */
-auto isInValidateVector(lugo::Vector const& v) -> bool
-{
-  return v.x() == 0 && v.y() == 0;
-}
+auto isInValidateVector(lugo::Vector const& v) -> bool;
 
 /**
- *
+ * TODO: Should be described.
  * @param Point from
  * @param Point to
  * @returns Vector
  */
-auto NewVector(lugo::Point from, lugo::Point to) -> lugo::Vector
-{
-  auto v = lugo::Vector();
-  v.set_x(to.x() - from.x());
-  v.set_y(to.y() - from.y());
-  if (isInValidateVector(v)) {
-    throw std::runtime_error("an vector cannot have zero length");
-  }
-  return v;
-}
+auto NewVector(lugo::Point const& from, lugo::Point const& to) -> lugo::Vector;
 
 /**
- *
+ * TODO: Should be described.
  * @param Vector v
  * @returns number
  */
-auto getLength(lugo::Vector v) -> int
-{
-  return std::hypot(v.x(), v.y());
-}
+auto getLength(lugo::Vector const& v) -> float;
 
 /**
- *
- * @param Vector v
- * @param number scale
- * @returns Vector
+ * TODO: Should be described.
+ * @param v
+ * @param scale
+ * @return
  */
-auto getScaledVector(lugo::Vector v, int scale) -> lugo::Vector
-{
-  if (scale <= 0) {
-    throw std::runtime_error("vector can not have zero length");
-  }
-  auto v2 = lugo::Vector();
-  v2.set_x(v.x() * scale);
-  v2.set_y(v.y() * scale);
-  return v2;
-}
+auto getScaledVector(lugo::Vector const& v, float scale) -> lugo::Vector;
 
 /**
- *
- * @param Vector v
- * @returns Vector a new vector with same direction but normalized to 0-100
+ * TODO: Should be described.
+ * @param v
+ * @return Vector a new vector with same direction but normalized to 0-100
  */
-auto normalize(lugo::Vector v) -> lugo::Vector
-{
-  auto const length = getLength(v);
-  return getScaledVector(v, 100 / length);
-}
+auto normalize(lugo::Vector const& v) -> lugo::Vector;
 
 /**
- *
+ * TODO: Should be described.
  * @param Vector originalV
  * @param Vector subV
  * @returns Vector
  */
-auto subVector(lugo::Vector originalV, lugo::Vector subV) -> lugo::Vector
-{
-  auto const newX = originalV.x() - subV.x();
-  auto const newY = originalV.y() - subV.y();
-  auto newVector = lugo::Vector();
-  newVector.set_x(newX);
-  newVector.set_y(newY);
-  if (isInValidateVector(newVector)) {
-    throw std::runtime_error("could not subtract vectors an vector cannot have zero length");
-  }
-  return newVector;
-}
+auto subVector(lugo::Vector const& originalV, lugo::Vector const& subV) -> lugo::Vector;
 
-auto distanceBetweenPoints(lugo::Point a, lugo::Point b) -> int
-{
-  return std::hypot(a.x() - b.x(), a.y() - b.y());
-}
+/**
+ * TODO: Should be described.
+ * @param a
+ * @param b
+ * @return
+ */
+auto distanceBetweenPoints(lugo::Point const& a, lugo::Point const& b) -> float;

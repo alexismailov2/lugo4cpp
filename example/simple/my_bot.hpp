@@ -1,9 +1,9 @@
 #pragma once
 
 #include <lugo/index.hpp>
-
 #include <lugo/stub.hpp>
-#include <server.pb.h>
+
+#include <pb/server.pb.h>
 
 class MyBot
     : public Bot
@@ -77,7 +77,7 @@ public:
       orderSet.set_turn(snapshot.turn());
       orderSet.set_debug_message("mi mi mi");
       std::vector<lugo::Order> list{moveOrder};
-      orderSet.mutable_orders()->Add(list.begin(), list.end());
+      orderSet.mutable_orders()->Assign(list.begin(), list.end());
       return orderSet;
     }
     catch (std::runtime_error& e)
@@ -107,7 +107,7 @@ public:
       orderSet.set_turn(snapshot.turn());
       orderSet.set_debug_message("trying to catch the ball");
       std::vector<lugo::Order> list{moveOrder, catchOrder};
-      orderSet.mutable_orders()->Add(list.begin(), list.end());
+      orderSet.mutable_orders()->Assign(list.begin(), list.end());
       return orderSet;
     }
     catch (std::runtime_error& e)
@@ -139,7 +139,7 @@ public:
       orderSet.set_turn(snapshot.turn());
       orderSet.set_debug_message("attack!");
       std::vector<lugo::Order> list{myOrder};
-      orderSet.mutable_orders()->Add(list.begin(), list.end());
+      orderSet.mutable_orders()->Assign(list.begin(), list.end());
       return orderSet;
     }
     catch (std::runtime_error &e)
@@ -160,7 +160,7 @@ public:
       orderSet.set_turn(snapshot.turn());
       orderSet.set_debug_message("supporting");
       std::vector<lugo::Order> list;
-      orderSet.mutable_orders()->Add(list.begin(), list.end());
+      orderSet.mutable_orders()->Assign(list.begin(), list.end());
       return orderSet;
     }
     catch (std::runtime_error &e)
@@ -192,7 +192,7 @@ public:
       orderSet.set_turn(snapshot.turn());
       orderSet.set_debug_message("supporting");
       std::vector<lugo::Order> list{myOrder, reader.makeOrderCatch()};
-      orderSet.mutable_orders()->Add(list.begin(), list.end());
+      orderSet.mutable_orders()->Assign(list.begin(), list.end());
       return orderSet;
     }
     catch (std::runtime_error& e)

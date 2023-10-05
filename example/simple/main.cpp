@@ -43,8 +43,8 @@ int main()
   auto map = std::make_shared<Mapper>(10, 6, config. getBotTeamSide());
 
   // our bot strategy defines our bot initial position based on its number
-  auto initialRegion = map->getRegion(PLAYER_POSITIONS[config.getBotNumber()].Col,
-                                      PLAYER_POSITIONS[config.getBotNumber()].Row);
+  auto initialRegion = map->getRegion(PLAYER_POSITIONS[config.getBotNumber() - 1].Col,
+                                      PLAYER_POSITIONS[config.getBotNumber() - 1].Row);
 
   // now we can create the bot. We will use a shortcut to create the client from the config, but we could use the
   // client constructor as well
@@ -54,13 +54,13 @@ int main()
                      initialRegion.getCenter(),
                      map);
 
-  lugoClient.playAsBot(myBot, [](){
+  lugoClient->playAsBot(myBot, [](){
     std::cout << "I may run it when the bot is connected to the server" << std::endl;
   });
   std::cout << "We are playing!" << std::endl;
 
   signal(SIGINT, signalHandler);
-  lugoClient.wait();
+  lugoClient->wait();
   std::cout << "bye!" << std::endl;
   return 0;
 }

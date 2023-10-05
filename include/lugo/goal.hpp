@@ -1,19 +1,22 @@
 #pragma once
 
-#include <physics.pb.h>
-#include <server.pb.h>
+#include <pb/physics.pb.h>
+#include <pb/server.pb.h>
 
+/**
+ * TODO: Should be described.
+ */
 class Goal
 {
 private:
-  lugo::Point _center;
-  lugo::Team_Side _place;
-  lugo::Point _topPole;
-  lugo::Point _bottomPole;
+  lugo::Team_Side _place; /// TODO: Should be described.
+  lugo::Point _center; /// TODO: Should be described.
+  lugo::Point _topPole; /// TODO: Should be described.
+  lugo::Point _bottomPole; /// TODO: Should be described.
 
 public:
   /**
-   *
+   * TODO: Should be described.
    * @param place
    * @param center
    * @param topPole
@@ -22,16 +25,29 @@ public:
   Goal(lugo::Team_Side place,
        lugo::Point center,
        lugo::Point topPole,
-       lugo::Point bottomPole)
-    : _center{center}
-    , _place{place}
-    , _topPole{topPole}
-    , _bottomPole{bottomPole}
-  {
-  }
+       lugo::Point bottomPole);
 
-  auto getCenter() -> lugo::Point { return _center; }
-  auto getPlace() -> lugo::Team_Side { return _place; }
-  auto getTopPole() -> lugo::Point { return _topPole; }
-  auto getBottomPole() -> lugo::Point { return _bottomPole; }
+  /**
+   * TODO: Should be described.
+   * @return
+   */
+  auto getCenter() -> lugo::Point;
+
+  /**
+   * TODO: Should be described.
+   * @return
+   */
+  auto getPlace() -> lugo::Team_Side;
+
+  /**
+   * TODO: Should be described.
+   * @return
+   */
+  auto getTopPole() -> lugo::Point;
+
+  /**
+   * TODO: Should be described.
+   * @return
+   */
+  auto getBottomPole() -> lugo::Point;
 };

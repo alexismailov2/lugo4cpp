@@ -31,17 +31,17 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH=${{github.workspace}}/grpc/grpc_install
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH=${{github.workspace}}/grpc/grpc_install -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/build/install
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
 
     - name: Upload lugo4cpp artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Ubuntu-lugo4cpp
-        path: ${{github.workspace}}/build/example/simple/lugo4cpp_example
+        path: ${{github.workspace}}/build/install
 
   build-macos-latest:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
@@ -61,15 +61,15 @@ jobs:
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/build/install
 
       - name: Build library
         # Build your program with the given configuration
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
 
       - name: Upload lugo4cpp artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Macos-lugo4cpp
-          path: ${{github.workspace}}/build/example/simple/lugo4cpp_example
+          path: ${{github.workspace}}/build/install
 

@@ -8,34 +8,34 @@ Region::Region(int col,
     : _col{col},
       _row{row},
       _side{side},
-      _center{center},
-      _positioner{positioner}
+      _center{std::move(center)},
+      _positioner{std::move(positioner)}
 {
 }
 
-bool Region::eq(Region region)
+bool Region::eq(Region const& region) const
 {
   return region.getCol() == _col &&
          region._side == _side &&
          region.getRow() == _row;
 }
 
-auto Region::getCol() -> int
+auto Region::getCol() const -> int
 {
   return _col;
 }
 
-auto Region::getRow() -> int
+auto Region::getRow() const -> int
 {
   return _row;
 }
 
-auto Region::getCenter() -> lugo::Point
+auto Region::getCenter() const -> lugo::Point const&
 {
   return _center;
 }
 
-auto Region::toString() -> std::string
+auto Region::toString() const -> std::string
 {
   return std::to_string(_col) + ", " + std::to_string(_row);
 }
@@ -108,7 +108,7 @@ auto Mapper::getRegionFromPoint(lugo::Point point) -> Region
   return getRegion(col, row);
 }
 
-auto Mapper::mirrorCoordsToAway(lugo::Point center) -> lugo::Point
+auto Mapper::mirrorCoordsToAway(lugo::Point const& center) -> lugo::Point
 {
   auto mirrored = lugo::Point();
   mirrored.set_x(SPECS::MAX_X_COORDINATE - center.x());

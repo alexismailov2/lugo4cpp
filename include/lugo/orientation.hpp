@@ -1,66 +1,56 @@
 #pragma once
 
-#include <physics.pb.h>
 #include <lugo/geo.hpp>
 
+#include <pb/physics.pb.h>
+
 namespace ORIENTATION {
-inline auto EAST() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_x(1);
-  return normalize(vec);
-}
 
-inline auto WEST() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_x(-1);
-  return normalize(vec);
-}
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto EAST() -> lugo::Vector;
 
-inline auto SOUTH() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_y(-1);
-  return normalize(vec);
-}
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto WEST() -> lugo::Vector;
 
-inline auto NORTH() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_y(1);
-  return normalize(vec);
-}
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto SOUTH() -> lugo::Vector;
 
-inline auto NORTH_EAST() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_x(1);
-  vec.set_y(1);
-  return normalize(vec);
-}
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto NORTH() -> lugo::Vector;
 
-inline auto NORTH_WEST() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_x(-1);
-  vec.set_y(1);
-  return normalize(vec);
-}
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto NORTH_EAST() -> lugo::Vector;
 
-inline auto SOUTH_EAST() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_x(1);
-  vec.set_y(-1);
-  return normalize(vec);
-}
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto NORTH_WEST() -> lugo::Vector;
 
-inline auto SOUTH_WEST() -> lugo::Vector
-{
-  auto vec = lugo::Vector();
-  vec.set_x(-1);
-  vec.set_y(-1);
-  return normalize(vec);
-}
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto SOUTH_EAST() -> lugo::Vector;
+
+/**
+ * TODO: Should be described.
+ * @return
+ */
+auto SOUTH_WEST() -> lugo::Vector;
 }

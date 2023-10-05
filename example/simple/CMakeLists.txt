@@ -2,15 +2,18 @@
 add_executable(lugo4cpp_example
         main.cpp)
 
-#target_include_directories(lugo4cpp_example
-#        PRIVATE
-#        include
-#        ${CMAKE_CURRENT_BINARY_DIR}
-#        ${Protobuf_INCLUDE_DIRS})
+target_include_directories(lugo4cpp_example
+        PRIVATE
+        ${CMAKE_BINARY_DIR}/install/include
+        ${Protobuf_INCLUDE_DIRS})
 
-find_package(absl REQUIRED)
-find_package(utf8_range REQUIRED)
+target_link_libraries(lugo4cpp_example
+        PRIVATE
+        -L${CMAKE_BINARY_DIR}/install/lib/
+        lugo4cpp
+        )
 
+if (0)
 target_link_libraries(lugo4cpp_example
         PRIVATE
         lugo4cpp
@@ -196,3 +199,10 @@ target_link_libraries(lugo4cpp_example
 #        absl::utility
 #        absl::if_constexpr
         )
+endif()
+
+# install the binaries and include files
+install(TARGETS lugo4cpp_example
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)

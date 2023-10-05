@@ -1,6 +1,6 @@
 #pragma once
 
-#include <server.pb.h>
+#include <pb/server.pb.h>
 
 enum class PLAYER_STATE {
     SUPPORTING,
@@ -9,25 +9,22 @@ enum class PLAYER_STATE {
     DISPUTING_THE_BALL
 };
 
-std::string to_string(PLAYER_STATE playerState)
-{
-  switch(playerState)
-  {
-    case PLAYER_STATE::SUPPORTING:
-      return "supporting";
-    case PLAYER_STATE::HOLDING_THE_BALL:
-      return "holding";
-    case PLAYER_STATE::DEFENDING:
-      return "defending";
-    case PLAYER_STATE::DISPUTING_THE_BALL:
-    default:
-      return "disputing";
-  }
-}
+/**
+ * TODO: Should be described.
+ * @param playerState
+ * @return
+ */
+std::string to_string(PLAYER_STATE playerState);
 
+/**
+ * TODO: Should be described.
+ */
 class Bot
 {
 public:
+  /**
+   * Necessary if planned to derive from this class.
+   */
   virtual ~Bot() = default;
 
   /**
