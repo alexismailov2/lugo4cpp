@@ -3,6 +3,7 @@
 #include "my_bot.hpp"
 
 #include <iostream>
+#include <csignal>
 
 Client* lugoClientPtr = nullptr;
 auto signalHandler(int signum)
