@@ -8,6 +8,7 @@ option(BUILD_SHARED_LIBRARY "Select shared library build or static" ON)
 # Use option to control which type of library you will prefer
 if (BUILD_SHARED_LIBRARY)
     set(LIBRARY_TYPE SHARED)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 else()
     set(LIBRARY_TYPE STATIC)
 endif()
