@@ -2,7 +2,7 @@ version: '3.9'
 services:
   game_server:
     image: lugobots/server:${SERVER_VERSION:-latest}
-    command: play --dev-mode --timer-mode=wait
+    command: play --dev-mode --timer-mode=wait --quiet
     ports:
       - "8080:8080"
       - "5000:5000"
@@ -13,7 +13,7 @@ services:
       retries: 100
       start_period: 10s
   player_home_01:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -23,7 +23,7 @@ services:
       - BOT_NUMBER=1
       - BOT_TEAM=HOME
   player_home_02:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -33,7 +33,7 @@ services:
       - BOT_NUMBER=2
       - BOT_TEAM=HOME
   player_home_03:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -43,7 +43,7 @@ services:
       - BOT_NUMBER=3
       - BOT_TEAM=HOME
   player_home_04:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     restart: unless-stopped
     depends_on:
@@ -54,7 +54,7 @@ services:
       - BOT_NUMBER=4
       - BOT_TEAM=HOME
   player_home_05:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -64,7 +64,7 @@ services:
       - BOT_NUMBER=5
       - BOT_TEAM=HOME
   player_home_06:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -74,7 +74,7 @@ services:
       - BOT_NUMBER=6
       - BOT_TEAM=HOME
   player_home_07:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -84,7 +84,7 @@ services:
       - BOT_NUMBER=7
       - BOT_TEAM=HOME
   player_home_08:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -94,7 +94,7 @@ services:
       - BOT_NUMBER=8
       - BOT_TEAM=HOME
   player_home_09:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -104,7 +104,7 @@ services:
       - BOT_NUMBER=9
       - BOT_TEAM=HOME
   player_home_10:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:
@@ -114,7 +114,7 @@ services:
       - BOT_NUMBER=10
       - BOT_TEAM=HOME
   player_home_11:
-    image: docker.io/library/lugo4cpp:latest
+    image: rubens21/cpp_compiler:debuging
     network_mode: "host"
     depends_on:
       game_server:

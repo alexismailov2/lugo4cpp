@@ -88,12 +88,12 @@ auto defineState(const lugo::GameSnapshot &snapshot, int playerNumber, lugo::Tea
     throw std::runtime_error("could not find the bot in the snapshot - cannot define player state");
   }
 
-  auto const ballHolder = snapshot.ball().holder();
-  if (!ballHolder.IsInitialized())
+  if (!snapshot.ball().has_holder())
   {
     return PLAYER_STATE::DISPUTING_THE_BALL;
   }
-  else if (ballHolder.team_side() == side)
+  auto const ballHolder = snapshot.ball().holder();
+  if (ballHolder.team_side() == side)
   {
     if (ballHolder.number() == playerNumber)
     {

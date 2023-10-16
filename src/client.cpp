@@ -126,7 +126,10 @@ void Client::_bot_start(RawTurnProcessor processor, std::function<void()> onJoin
   //_play_routine = std::thread([rdr = std::move(reader), p = std::move(processor), this]() mutable {
   //  _response_watcher(std::move(rdr), std::move(p));
   //});
+  std::cout << "++++++ 1 ++++++" << std::endl;
+  _play_finished = false;
   _response_watcher(std::move(reader), std::move(processor));
+  std::cout << "++++++ 2 ++++++" << std::endl;
 }
 
 void Client::stop()
@@ -182,7 +185,10 @@ void Client::_response_watcher(std::unique_ptr<::grpc::ClientReader<::lugo::Game
         if (orders_.IsInitialized())
         {
           auto orderResponse = lugo::OrderResponse();
-          auto status = _client->SendOrders(&_context, orders_, &orderResponse);
+//          std::cout << "++++++ LISTENING 7 ++++++" << std::endl;
+          ClientContext context;
+          auto status = _client->SendOrders(&context, orders_, &orderResponse);
+//          std::cout << "++++++ LISTENING 6 ++++++" << std::endl;
           if (!status.ok())
           {
             std::cout << get_name() << " bot processor errorCode: " << status.error_code() << ", errorMessage: " << status.error_message() << std::endl;

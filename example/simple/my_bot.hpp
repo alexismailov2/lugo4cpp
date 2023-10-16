@@ -34,6 +34,9 @@ public:
 
   ~MyBot() override = default;
 
+  void printString(const std::string& str) {
+    std::cout << str << std::endl;
+  }
   /**
    *
    * @param {GameSnapshot} snapshot
@@ -62,21 +65,21 @@ public:
     try
     {
       auto [reader, me] = _makeReader(snapshot);
-      auto ballPosition = reader.getBall().position();
+      auto ballPosition = snapshot.ball().position();
       auto ballRegion = mapper->getRegionFromPoint(ballPosition);
-      auto myRegion = mapper->getRegionFromPoint(me.position()); //(initPosition);
+      auto myRegion = mapper->getRegionFromPoint(initPosition);
 
       auto moveDest = initPosition;
       if (std::abs(myRegion.getRow() - ballRegion.getRow()) <= 2 &&
-          std::abs(myRegion.getCol() - ballRegion.getCol()) <= 2)
-      {
+          std::abs(myRegion.getCol() - ballRegion.getCol()) <= 2) {
         moveDest = ballPosition;
       }
       auto moveOrder = reader.makeOrderMoveMaxSpeed(me.position(), moveDest);
-      // const catchOrder = reader.
+      auto catchOrder = reader.makeOrderCatch();
+
       orderSet.set_turn(snapshot.turn());
-      orderSet.set_debug_message("mi mi mi");
-      std::vector<lugo::Order> list{moveOrder};
+      orderSet.set_debug_message("trying to catch the ball");
+      std::vector<lugo::Order> list{moveOrder, catchOrder};
       orderSet.mutable_orders()->Assign(list.begin(), list.end());
       return orderSet;
     }
