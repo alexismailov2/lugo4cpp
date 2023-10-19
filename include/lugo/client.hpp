@@ -6,6 +6,7 @@
 
 #include <grpc/grpc.h>
 #include <grpcpp/create_channel.h>
+#include <grpcpp/client_context.h>
 
 #include <pb/physics.pb.h>
 #include <pb/server.pb.h>
@@ -13,7 +14,7 @@
 
 #include <functional>
 #include <future>
-
+using grpc::ClientContext;
 auto const PROTOCOL_VERSION = "1.0.0";
 
 using RawTurnProcessor = std::function<lugo::OrderSet(lugo::OrderSet, lugo::GameSnapshot)>;

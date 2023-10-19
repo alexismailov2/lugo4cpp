@@ -1,18 +1,23 @@
-FROM rubens21/cpp_compiler:v3 as BUILER
+FROM rubens21/cpp_compiler:debuging
 
-RUN ls -las ./build && pwd && ls -las ./build/install/bin
+COPY ./example/simple /base/example/simple
+
+WORKDIR /base/
+RUN echo "Configure CMake"
+RUN cmake -B ./build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=./grpc/grpc_install -DCMAKE_INSTALL_PREFIX=./build/install
+RUN echo "Build"
+RUN cmake --build ./build --config Release --target install
+RUN ls -las && pwd
+
+
+
+#RUN ls -las ./build && pwd && ls -las ./build/install/bin
+#FROM ubuntu:23.10
+#COPY --from=builder /base/build/liblugo4cpp.so /base/build/install/bin/liblugo4cpp.so
+#COPY --from=builder /base/build/liblugo_proto.a /base/build/install/bin/liblugo_proto.a
+#RUN ls -las ./build && pwd && ls -las ./build/install/bin
 RUN cp ./build/liblugo4cpp.so ./build/install/bin/liblugo4cpp.so
 RUN cp ./build/liblugo_proto.a ./build/install/bin/liblugo_proto.a
-#COPY . lugo
-#RUN cd lugo && \
-#    cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./build/install && \
-#    cmake --build build --config Release --target install && \
-#    pwd && ls -ls && \
-#    echo "=====================" && \
-#    cd ../ && pwd ls -las
-
-
-
 
 # cmake -B<temporary folder for project generation, could be not only Makefile>
 #       -DCMAKE_BUILD_TYPE=<Release|Debug|etc>
