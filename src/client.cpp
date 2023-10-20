@@ -179,11 +179,11 @@ void Client::_response_watcher(std::unique_ptr<::grpc::ClientReader<::lugo::Game
         {
           std::cout << get_name() << " bot processor error: " << e.what() << std::endl;
         }
-        if (orders_.IsInitialized())
+        //if (orders_.IsInitialized())
         {
           auto orderResponse = lugo::OrderResponse();
 //          std::cout << "++++++ LISTENING 7 ++++++" << std::endl;
-          ClientContext context;
+          grpc::ClientContext context;
           auto status = _client->SendOrders(&context, orders_, &orderResponse);
 //          std::cout << "++++++ LISTENING 6 ++++++" << std::endl;
           if (!status.ok())
