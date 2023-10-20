@@ -41,7 +41,7 @@ void Client::playAsBot(Bot &bot, std::function<void()> onJoin)
   set_getting_ready_handler([&](lugo::GameSnapshot s) { bot.gettingReady(s); });
   std::cout << get_name() << " Playing as bot" << std::endl;
 
-  auto processor = [&](lugo::OrderSet orders, lugo::GameSnapshot snapshot) -> lugo::OrderSet {
+  auto processor = [&](lugo::OrderSet orders, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> {
     auto playerState = defineState(snapshot, _number, _teamSide);
     if (_number == 1)
     {
@@ -49,19 +49,15 @@ void Client::playAsBot(Bot &bot, std::function<void()> onJoin)
     }
     switch (playerState) {
       case PLAYER_STATE::DISPUTING_THE_BALL:
-        orders = bot.onDisputing(orders, snapshot);
-        break;
+        return bot.onDisputing(orders, snapshot);
       case PLAYER_STATE::DEFENDING:
-        orders = bot.onDefending(orders, snapshot);
-        break;
+        return bot.onDefending(orders, snapshot);
       case PLAYER_STATE::SUPPORTING:
-        orders = bot.onSupporting(orders, snapshot);
-        break;
+        return bot.onSupporting(orders, snapshot);
       case PLAYER_STATE::HOLDING_THE_BALL:
-        orders = bot.onHolding(orders, snapshot);
-        break;
+        return bot.onHolding(orders, snapshot);
     }
-    return orders;
+    return {};
   };
   _bot_start(processor, std::move(onJoin));
 }
@@ -169,22 +165,23 @@ void Client::_response_watcher(std::unique_ptr<::grpc::ClientReader<::lugo::Game
       }
       else if (snapshot.state() == lugo::GameSnapshot_State_LISTENING)
       {
-        auto orders_ = lugo::OrderSet();
-        orders_.set_turn(snapshot.turn());
+        auto orders_ = std::optional<lugo::OrderSet>();
+        orders_ = lugo::OrderSet();
+        orders_.value().set_turn(snapshot.turn());
         try
         {
-          orders_ = processor(orders_, snapshot);
+          orders_ = processor(orders_.value(), snapshot);
         }
         catch(std::runtime_error& e)
         {
           std::cout << get_name() << " bot processor error: " << e.what() << std::endl;
         }
-        //if (orders_.IsInitialized())
+        if (orders_.has_value())
         {
           auto orderResponse = lugo::OrderResponse();
 //          std::cout << "++++++ LISTENING 7 ++++++" << std::endl;
           grpc::ClientContext context;
-          auto status = _client->SendOrders(&context, orders_, &orderResponse);
+          auto status = _client->SendOrders(&context, orders_.value(), &orderResponse);
 //          std::cout << "++++++ LISTENING 6 ++++++" << std::endl;
           if (!status.ok())
           {

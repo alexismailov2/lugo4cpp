@@ -17,7 +17,7 @@
 
 auto const PROTOCOL_VERSION = "1.0.0";
 
-using RawTurnProcessor = std::function<lugo::OrderSet(lugo::OrderSet, lugo::GameSnapshot)>;
+using RawTurnProcessor = std::function<std::optional<lugo::OrderSet>(lugo::OrderSet, lugo::GameSnapshot)>;
 
 /**
  * TODO: Should be described.

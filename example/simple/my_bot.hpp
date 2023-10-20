@@ -56,7 +56,7 @@ public:
    * @param snapshot
    * @return
    */
-  auto onDisputing(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet override
+  auto onDisputing(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> override
   {
     try
     {
@@ -87,7 +87,7 @@ public:
     return {};
   }
 
-  auto onDefending(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet override
+  auto onDefending(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> override
   {
     try
     {
@@ -117,7 +117,7 @@ public:
     return {};
   }
 
-  auto onHolding(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet override
+  auto onHolding(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> override
   {
     try {
       auto [reader, me] = _makeReader(snapshot);
@@ -149,7 +149,7 @@ public:
     return {};
   }
 
-  auto onSupporting(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet override
+  auto onSupporting(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> override
   {
     try
     {
@@ -177,7 +177,7 @@ public:
    * @param state
    * @return {OrderSet}
    */
-  auto asGoalkeeper(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot, PLAYER_STATE state) -> lugo::OrderSet override
+  auto asGoalkeeper(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot, PLAYER_STATE state) -> std::optional<lugo::OrderSet> override
   {
     try
     {
