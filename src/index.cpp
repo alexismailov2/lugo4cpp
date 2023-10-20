@@ -83,17 +83,12 @@ auto defineState(const lugo::GameSnapshot &snapshot, int playerNumber, lugo::Tea
 
   auto const reader = GameSnapshotReader(snapshot, side);
   auto const me = reader.getPlayer(side, playerNumber);
-  if (!me.IsInitialized())
-  {
-    throw std::runtime_error("could not find the bot in the snapshot - cannot define player state");
-  }
-
-  auto const ballHolder = snapshot.ball().holder();
-  if (!ballHolder.IsInitialized())
+  if (!snapshot.ball().has_holder())
   {
     return PLAYER_STATE::DISPUTING_THE_BALL;
   }
-  else if (ballHolder.team_side() == side)
+  auto const ballHolder = snapshot.ball().holder();
+  if (ballHolder.team_side() == side)
   {
     if (ballHolder.number() == playerNumber)
     {
@@ -156,10 +151,6 @@ auto GameSnapshotReader::getOpponentGoal() const -> Goal
 auto GameSnapshotReader::getPlayer(lugo::Team::Side side, int number) const -> lugo::Player
 {
   auto const team = getTeam(side);
-  if (!team.IsInitialized())
-  {
-    return {};
-  }
   for (auto const& player : team.players())
   {
     if (player.number() == number)
@@ -167,7 +158,7 @@ auto GameSnapshotReader::getPlayer(lugo::Team::Side side, int number) const -> l
       return player;
     }
   }
-  return {};
+  throw std::runtime_error(std::string("did not find player with number ") + std::to_string(number));;
 }
 
 auto GameSnapshotReader::makeOrderMoveMaxSpeed(lugo::Point origin, lugo::Point target) -> lugo::Order

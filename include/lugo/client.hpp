@@ -6,6 +6,7 @@
 
 #include <grpc/grpc.h>
 #include <grpcpp/create_channel.h>
+#include <grpcpp/client_context.h>
 
 #include <pb/physics.pb.h>
 #include <pb/server.pb.h>
