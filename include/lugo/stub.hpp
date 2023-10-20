@@ -33,7 +33,7 @@ public:
    * @param snapshot snapshot
    * @return OrderSet or empty
    */
-  virtual auto onDisputing(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet = 0;
+  virtual auto onDisputing(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> = 0;
 
   /**
    * onDefending is called when an opponent player has the ball possession
@@ -41,7 +41,7 @@ public:
    * @param snapshot snapshot
    * @return OrderSet or empty
    */
-  virtual auto onDefending(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet = 0;
+  virtual auto onDefending(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> = 0;
 
   /**
    * onHolding is called when this bot has the ball possession
@@ -49,7 +49,7 @@ public:
    * @param snapshot snapshot
    * @return OrderSet or empty
    */
-  virtual auto onHolding(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet = 0;
+  virtual auto onHolding(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> = 0;
 
   /**
    * onSupporting is called when TODO: should be finished
@@ -57,7 +57,7 @@ public:
    * @param snapshot snapshot
    * @return OrderSet or empty
    */
-  virtual auto onSupporting(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> lugo::OrderSet = 0;
+  virtual auto onSupporting(lugo::OrderSet orderSet, lugo::GameSnapshot snapshot) -> std::optional<lugo::OrderSet> = 0;
 
   /**
    * asGoalkeeper is only called when this bot is the goalkeeper (number 1). This method is called on every turn,
@@ -69,7 +69,7 @@ public:
    */
   virtual auto asGoalkeeper(lugo::OrderSet orderSet,
                             lugo::GameSnapshot snapshot,
-                            PLAYER_STATE state) -> lugo::OrderSet = 0;
+                            PLAYER_STATE state) -> std::optional<lugo::OrderSet> = 0;
 
   /**
    * gettingReady is called when the game is on Getting Ready state.
